@@ -1,19 +1,39 @@
-name: Testes
+    name: Testes
 
-on:
-  push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
-
-jobs:
-  test:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: '16'
-      - run: npm install
-      - run: npm test
+    on:
+      push:
+        branches: [ main ]
+      pull_request:
+        branches: [ main ]
+    
+    jobs:
+      test:
+        runs-on: ubuntu-latest
+        steps:
+          - uses: actions/checkout@v3
+          
+          - name: Setup Node.js
+            uses: actions/setup-node@v3
+            with:
+              node-version: '16'
+          
+          - name: Create package.json if not exists
+            run: |
+              if [ ! -f package.json ]; then
+                echo '{
+                  "name": "demo-workflow-run",
+                  "version": "1.0.0",
+                  "description": "Demo para GitHub Actions workflow_run",
+                  "main": "src/app.js",
+                  "scripts": {
+                    "test": "jest"
+                  },
+                  "dependencies": {},
+                  "devDependencies": {
+                    "jest": "^29.5.0"
+                  }
+                }' > package.json
+              fi
+          
+          - run: npm install
+          - run: npm test
